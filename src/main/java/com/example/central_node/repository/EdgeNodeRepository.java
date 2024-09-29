@@ -11,6 +11,6 @@ import java.util.List;
 
 
 public interface EdgeNodeRepository extends JpaRepository<VirtualEdgeNode, Long> {
-    @Query("SELECT v FROM VirtualEdgeNode v WHERE v.isAvailable = true")
+
     List<VirtualEdgeNode> findByAvailableTrue();
 }

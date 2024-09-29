@@ -1,55 +1,59 @@
 package com.example.central_node.controller;
 
-
+import com.example.central_node.java.GroqService;
+import com.example.central_node.java.PromptRequest;
 import com.example.central_node.model.VirtualEdgeNode;
-import com.example.central_node.model.PromptRequest;
-import java.util.ArrayList;
-import java.util.Comparator;
+import com.example.central_node.repository.EdgeNodeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+
+@Service
 public class TaskManager {
-
-    private final List<VirtualEdgeNode> edgeNodes;
-    public TaskManager() {
-        this.edgeNodes = new ArrayList<>(); // Simulating an in-memory repository
+    private final EdgeNodeRepository edgeNodeRepository;
+    private final GroqService groqService;
+    @Autowired
+    public TaskManager(EdgeNodeRepository edgeNodeRepository, GroqService groqService) {
+        this.groqService = groqService;
+        this.edgeNodeRepository = edgeNodeRepository;
     }
+
+    // Method to register a new virtual edge node
     public void registerNode(VirtualEdgeNode node) {
-        edgeNodes.add(node);
-        System.out.println("Node " + node.getId() + " registered with distance: " + node.getDistance());
+
+            edgeNodeRepository.save(node); // Save the node to the database
     }
-    private synchronized VirtualEdgeNode findClosestAvailableNode() {
-        // Sort nodes by distance and return the closest available one
-        Optional<VirtualEdgeNode> closestNode = edgeNodes.stream()
-                .filter(VirtualEdgeNode::isAvailable)
-                .min(Comparator.comparingDouble(VirtualEdgeNode::getDistance));
 
-        return closestNode.orElse(null); // Return null if no available nodes
-    }
-    public String assignTaskToClosestNode(PromptRequest request) {
-        VirtualEdgeNode closestAvailableNode = findClosestAvailableNode();
-        if (closestAvailableNode != null) {
+    public CompletableFuture<String> assignTaskToClosestNode(String request) {
+        List<VirtualEdgeNode> availableNodes = edgeNodeRepository.findByAvailableTrue(); // Fetch available nodes
 
-            closestAvailableNode.setAvailable(false);
-            System.out.println("Task assigned to node " + closestAvailableNode.getId());
-
-            // Start a new thread to process the request
-            new Thread(() -> {
-                closestAvailableNode.processPrompt(request);
-
-                // After processing, mark node as available again
-                closestAvailableNode.setAvailable(true);
-            }).start();
-            return "Task is being processed by node " + closestAvailableNode.getId();
-        } else {
-            System.out.println("No available nodes to handle the request.");
-            return "No available nodes to handle the request.";
+        if (availableNodes.isEmpty()) {
+            return CompletableFuture.completedFuture("No available nodes to process the request.");
         }
+
+        // Find the closest node based on distance
+        VirtualEdgeNode closestNode = availableNodes.stream()
+                .min((node1, node2) -> Double.compare(node1.getDistance(), node2.getDistance()))
+                .orElse(null);
+
+        if (closestNode != null) {
+            // Start processing the task and handle the future response
+
+            return closestNode.startProcessingTask(request,groqService).thenApply(result -> {
+                closestNode.setAvailable(true); // Mark node as available again
+                edgeNodeRepository.save(closestNode); // Update node status in DB
+                return result; // Return the processed result
+            });
+        } else {
+            CompletableFuture<String> future = new CompletableFuture<>();
+            future.complete("No available nodes to process the request.");
+            return future; // Return a completed future with a message
+        }
+
+
     }
 
-    public void printNodeStatus(List<String> statuses) {
-        edgeNodes.forEach(node -> {
-            statuses.add("Node " + node.getId() + " - Available: " + node.isAvailable());
-        });
-    }
 }
