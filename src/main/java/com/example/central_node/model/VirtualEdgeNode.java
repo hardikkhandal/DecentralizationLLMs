@@ -62,18 +62,21 @@ public class VirtualEdgeNode{
 
     // Start node task in a new thread
     public CompletableFuture<String> startProcessingTask(String request, GroqService groqService) {
-        try {
-            // Delay for 5 seconds
-            Thread.sleep(15000); // 5000 milliseconds = 5 seconds
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupted status
-            // Handle the exception if needed
-        }
+
 
         CompletableFuture<String> responseFuture = new CompletableFuture<>();
         // Create a new thread for processing the task
+
+
         Thread nodeThread = new Thread(() -> {
-            if (this.isAvailable()) {
+            try {
+                // Delay for 5 seconds
+                Thread.sleep(3000); // 5000 milliseconds = 5 seconds
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupted status
+                // Handle the exception if needed
+            }
+            if (true) {
                 try {
                     System.out.println(name + " is processing a task...");
                     this.available = false; // Mark as unavailable during processing

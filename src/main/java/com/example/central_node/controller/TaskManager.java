@@ -41,11 +41,16 @@ public class TaskManager {
 
         if (closestNode != null) {
             // Start processing the task and handle the future response
-
-            return closestNode.startProcessingTask(request,groqService).thenApply(result -> {
+            closestNode.setAvailable(false);
+            edgeNodeRepository.save(closestNode);
+            return closestNode.startProcessingTask(request, groqService).thenApply(result -> {
                 closestNode.setAvailable(true); // Mark node as available again
                 edgeNodeRepository.save(closestNode); // Update node status in DB
                 return result; // Return the processed result
+            }).exceptionally(ex -> {
+                closestNode.setAvailable(true); // Ensure the node is marked available on error
+                edgeNodeRepository.save(closestNode); // Update node status in DB
+                return "Error processing request: " + ex.getMessage();
             });
         } else {
             CompletableFuture<String> future = new CompletableFuture<>();
