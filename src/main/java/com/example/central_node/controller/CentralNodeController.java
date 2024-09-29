@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/central-node")
-
+@CrossOrigin(origins = "http://localhost:3000")
 public class CentralNodeController {
 
     @Autowired
@@ -34,9 +34,9 @@ public class CentralNodeController {
         this.groqService = groqService;
 
         // Registering some virtual edge nodes at startup
-        taskManager.registerNode(new VirtualEdgeNode("Node1", 10.0, "groqId1"));
-        taskManager.registerNode(new VirtualEdgeNode("Node2", 5.0, "groqId2"));
-        taskManager.registerNode(new VirtualEdgeNode("Node3", 20.0, "groqId3"));
+        taskManager.registerNode(new VirtualEdgeNode("Node1", 10.0, "Id1"));
+        taskManager.registerNode(new VirtualEdgeNode("Node2", 5.0, "Id2"));
+        taskManager.registerNode(new VirtualEdgeNode("Node3", 20.0, "Id3"));
     }
 
     @PostMapping("/process-prompt")
@@ -47,7 +47,7 @@ public class CentralNodeController {
 
     @GetMapping("/nodes")
     public List<VirtualEdgeNode> getAllNodes() {
-        return edgeNodeRepository.findByAvailableTrue();
+        return edgeNodeRepository.findAll();
     }
 
 }
