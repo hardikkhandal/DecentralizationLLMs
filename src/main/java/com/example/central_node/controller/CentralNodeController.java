@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/central-node")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://node-net-ai.vercel.app")
 public class CentralNodeController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class CentralNodeController {
     @Autowired
     public CentralNodeController(TaskManager taskManager) {
         this.taskManager = taskManager;
-        this.groqService = groqService;
+//        this.groqService = groqService;
 
         // Registering some virtual edge nodes at startup
         taskManager.registerNode(new VirtualEdgeNode("Node1", 10.0, "Id1"));
