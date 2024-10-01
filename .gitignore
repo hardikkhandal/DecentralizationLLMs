@@ -1,10 +1,10 @@
 HELP.md
-target/
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-out/
-Dockerfile
+
+
 
 ### STS ###
 .apt_generated
