@@ -2,6 +2,7 @@ com\example\central_node\CentralNodeApplication.class
 com\example\central_node\model\VirtualEdgeNode.class
 com\example\central_node\config\AppConfig.class
 com\example\central_node\java\GroqService.class
+com\example\central_node\config\WebConfig.class
 com\example\central_node\controller\TaskManager.class
 com\example\central_node\controller\CentralNodeController.class
 com\example\central_node\java\PromptRequest.class

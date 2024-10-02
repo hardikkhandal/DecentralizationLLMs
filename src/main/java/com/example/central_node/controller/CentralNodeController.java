@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/central-node")
-@CrossOrigin(origins = "https://node-net-ai.vercel.app/")
+@CrossOrigin(origins = {"https://node-net-ai.vercel.app", "http://localhost:3000"})
 public class CentralNodeController {
 
     @Autowired

@@ -1,5 +1,6 @@
 D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\CentralNodeApplication.java
 D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\config\AppConfig.java
+D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\config\WebConfig.java
 D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\controller\CentralNodeController.java
 D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\controller\TaskManager.java
 D:\javaproject\Decentralised LLMs\central-node\src\main\java\com\example\central_node\java\GroqService.java
